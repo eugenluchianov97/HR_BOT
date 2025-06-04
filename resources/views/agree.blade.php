@@ -1,0 +1,1 @@
+⚠️{{__('trans.agree',[],$lang)}}
