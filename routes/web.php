@@ -15,9 +15,7 @@ use Illuminate\Support\Facades\Storage;
 
 Route::group(['prefix' => 'debug'], function(){
     Route::get('/dir', [\App\Http\Services\TelegramService::class,'makeDir']);
-    Route::get('/lang', function(){
-        dump(__('trans.test',['from' =>10, 'to' => 20],'ru'));
-    });
+
 
     Route::get('/file', [\App\Http\Services\TelegramService::class,'uploadFile']);
 
