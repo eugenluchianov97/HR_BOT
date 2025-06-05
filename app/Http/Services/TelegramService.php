@@ -327,7 +327,7 @@ class TelegramService
     public function setLang(){
         $text = view('set_lang')->render();
 
-        $btn1 = $this->button('🇷🇴',['step' => 'get.lang','lang' => 'ro']);
+        $btn1 = $this->button('🇲🇩',['step' => 'get.lang','lang' => 'ro']);
 
         $btn2 = $this->button('🇷🇺',['step' => 'get.lang','lang' => 'ru']);
 

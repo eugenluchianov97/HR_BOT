@@ -9,7 +9,7 @@ return [
     'requirements' => 'Cerințe',
     'schedule' => 'Program (de lucru)',
     'delete_vacancy' => 'Șterge postul vacantă 🗑️',
-    'select_vacancy' => 'Selectează postulvacant  ✅',
+    'select_vacancy' => 'Selectează postul vacant  ✅',
     'back_to_list' => 'Înapoi la listă 📋',
     'click_now' => 'Aplică acum',
     'vacancies_list' => 'Lista posturilor vacante',
