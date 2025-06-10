@@ -108,67 +108,6 @@ trait Data1CTrait
     }
 
 
-    public function getVacancy($id){
-        $url = 'http://10.10.10.64:7766/erpbuh30/odata/standard.odata/Catalog_ex_%D0%92%D0%B0%D0%BA%D0%B0%D0%BD%D1%81%D0%B8%D0%B8?&$format=json&$expand=%D0%94%D0%BE%D0%BB%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D1%8C&$filter=Ref_Key%20eq%20guid\''.$id.'\'';
-
-        $res  = Http::withBasicAuth('exchange', 'saturn')->get($url);
-        $vacancy = [
-        ];
-
-        if($res->status() == 200){
-            $data = json_decode($res->body(),true);
-
-            $vacancyArr = $data['value'][0];
-            $works_days = [];
-            $documents = [];
-            $requirements = [];
-
-            foreach($vacancyArr['РабочиеДни'] as $day){
-                $works_days[] = [
-                    'name_ru' => Day::getName($day['ДеньНедели_Key'],'ru'),
-                    'name_ro' => Day::getName($day['ДеньНедели_Key'],'ro'),
-                    'begin' => date('H:i', strtotime($day['НачалоДня'])) ,
-                    'end' => date('H:i', strtotime($day['КонецДня'])),
-                ];
-            }
-
-            foreach($vacancyArr['Документы'] as $docs){
-                $documents[] = [
-                    'name_ru' => Document::getName($docs['ТипДокумента_Key'],'ru'),
-                    'name_ro' => Document::getName($docs['ТипДокумента_Key'],'ro'),
-                    'ref_key' =>$docs['ТипДокумента_Key'] ,
-
-                ];
-            }
-
-            foreach($vacancyArr['Требования'] as $requirement){
-                $requirements[] = [
-                    'name_ru' => Requirement::getName($requirement['Наименование_Key'],'ru'),
-                    'name_ro' => Requirement::getName($requirement['Наименование_Key'],'ro'),
-                    'value' => $requirement['ДопСведения'] ,
-                    'mandatory' => $requirement['Условие'],
-                ];
-            }
-
-
-            $vacancy['key'] = $vacancyArr['Ref_Key'];
-            $vacancy['work_schedule'] = $vacancyArr['ГрафикРаботы'];
-            $vacancy['code'] = $vacancyArr['Code'];
-            $vacancy['works_days'] = $works_days;
-            $vacancy['documents'] = $documents;
-            $vacancy['requirements'] = $requirements;
-            $vacancy['payment_min'] = $vacancyArr['МинЗарПлата'];
-            $vacancy['payment_max'] = $vacancyArr['МаксЗарПлата'];
-
-            $vacancy['address'] = $vacancyArr['Адрес'];
-            $vacancy['name_ru'] = isset($vacancyArr['Должность']) ? $vacancyArr['Должность']['НаименованиеКраткое'] : null;
-            $vacancy['name_ro'] = isset($vacancyArr['Должность']) ? $vacancyArr['Должность']['НаименованиеКраткое'] : null;
-        }
-
-        return $vacancy;
-    }
-
-
     public function getVacancies(){
         try {
 
@@ -209,22 +148,13 @@ trait Data1CTrait
                     foreach($vacancy['РабочиеДни'] as $item){
                         $day = Day::where('Ref_Key',$item['ДеньНедели_Key'])->first();
 
-                        $vacancyItem->days()->attach($day->id, [
-                            'from' => date('H:i', strtotime($item['НачалоДня'])),
-                            'to' => date('H:i', strtotime($item['КонецДня']))
-                        ]);
-                    }
-                }
+                        if($day){
+                            $vacancyItem->days()->attach($day->id, [
+                                'from' => date('H:i', strtotime($item['НачалоДня'])),
+                                'to' => date('H:i', strtotime($item['КонецДня']))
+                            ]);
+                        }
 
-                if(count($vacancy['Документы']) > 0){
-                    $vacancyItem->documents()->detach();
-                    foreach($vacancy['Документы'] as $item){
-                        $document = Document::where('Ref_Key',$item['ТипДокумента_Key'])->first();
-
-                        $vacancyItem->documents()->attach($document->id, [
-                            'additional_info' => $item['ДопСведения'],
-                            'required' =>  (isset($item['Условие']) && $item['Условие'] != "" ) ? 1 : 0
-                        ]);
                     }
                 }
 
@@ -233,17 +163,28 @@ trait Data1CTrait
 
                     foreach($vacancy['Требования'] as $item){
                         $requirement = Requirement::where('Ref_Key',$item['Наименование_Key'])->first();
-                        $vacancyItem->requirements()->attach($requirement->id, [
-                                'additional_info' => $item['ДопСведения'],
-                                'necessarily' => $item['Условие']]
-                        );
+                        if($requirement){
+                            $vacancyItem->requirements()->attach($requirement->id, [
+                                    'additional_info' => $item['ДопСведения'],
+                                    'necessarily' => $item['Условие']]
+                            );
+                        }
+
                     }
+
+
+
+
                 }
 
             }
         }
 
         return 'Sync '.Vacancy::count().' Vacancies in '. (microtime(true) - $time_start).' sec.';
+
+
+
+
     }
 
     public function sync(){

@@ -52,7 +52,7 @@ return [
     'errors' => [
         'alreadyExists' => 'IDNP-ul indicat există deja!',
         'notValid' => 'IDNP-ul indicat nu este valid!',
-        'format' => 'Sunt permise doar formatele: PDF, DOC, DOCX pentru documente!',
+        'format' => 'Sunt permise doar formatele: PDF pentru documente!',
         'size' => 'Dimensiunea documentului trebuie să fie de până la 20MB!',
     ],
     'needed_docs' => 'Bună ziua! Pentru finalizarea procesului de angajare, este necesar să ne trimiteți următoarele documente:',

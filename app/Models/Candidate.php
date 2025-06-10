@@ -20,7 +20,7 @@ class Candidate extends Model
 
     public function documents()
     {
-        return $this->belongsToMany(Document::class, 'candidate_documents','candidate_id','document_id')->withPivot('vacancy_id','src', 'required','type');
+        return $this->belongsToMany(Document::class, 'candidate_documents','candidate_id','document_id')->withPivot('src', 'required','type');
     }
 
     public function hasVacancy($vacancy_id){

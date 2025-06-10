@@ -14,6 +14,7 @@ class Vacancy extends Model
 
     protected $table = 'vacancies';
 
+
     public function days()
     {
         return $this->belongsToMany(Day::class, 'vacancy_days','vacancy_id','day_id')->withPivot('from', 'to');
@@ -22,11 +23,6 @@ class Vacancy extends Model
     public function requirements()
     {
         return $this->belongsToMany(Requirement::class, 'vacancy_requirements','vacancy_id','requirement_id')->withPivot('additional_info', 'necessarily');
-    }
-
-    public function documents()
-    {
-        return $this->belongsToMany(Document::class, 'vacancy_documents','vacancy_id','document_id')->withPivot('additional_info', 'required');;
     }
 
 }

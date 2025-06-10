@@ -22,9 +22,4 @@ class Document extends Model
         return $this->belongsToMany(Candidate::class)->withPivot('require');
     }
 
-    public function vacancies()
-    {
-        return $this->belongsToMany(Vacancy::class, 'vacancy_documents','vacancy_id','document_id')->withPivot('require');
-    }
-
 }

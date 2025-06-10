@@ -15,17 +15,15 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBiginteger('candidate_id')->unsigned();
-
             $table->unsignedBiginteger('document_id')->unsigned();
-            $table->unsignedBiginteger('vacancy_id')->unsigned();
 
             $table->text('src')->nullable();
             $table->text('type')->nullable();
-            $table->boolean('required')->default(false)->nullable();
+            $table->boolean('required')->default(true)->nullable();
 
             $table->foreign('candidate_id')->references('id')->on('candidates')->onDelete('cascade');
             $table->foreign('document_id')->references('id')->on('documents')->onDelete('cascade');
-            $table->foreign('vacancy_id')->references('id')->on('vacancies')->onDelete('cascade');
+
 
             $table->timestamps();
         });

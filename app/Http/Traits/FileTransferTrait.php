@@ -12,27 +12,28 @@ trait FileTransferTrait
 {
 
 
-    public $FILE_TRANSFER_URL = 'http://10.100.107.19:8080/api/v2/user';
-    public $FILE_TRANSFER_USER = 'hrdocs';
-    public $FILE_TRANSFER_PASS = 'N3PPyZ0JMiAesKS';
-    public function getToken(){
-        $url = $this->FILE_TRANSFER_URL.'/token';
-        $res  = Http::withBasicAuth($this->FILE_TRANSFER_USER, $this->FILE_TRANSFER_PASS)->get($url);
+    public static $FILE_TRANSFER_URL = 'http://10.100.107.19:8080/api/v2/user';
+    public static  $FILE_TRANSFER_USER = 'hrdocs';
+    public static  $FILE_TRANSFER_PASS = 'N3PPyZ0JMiAesKS';
+
+    public static function getToken(){
+        $url = self::$FILE_TRANSFER_URL.'/token';
+        $res  = Http::withBasicAuth(self::$FILE_TRANSFER_USER, self::$FILE_TRANSFER_PASS)->get($url);
         return [
             'code' => $res->status(),
             'token' => $res['access_token'] != null ? $res['access_token'] : ''
         ];
     }
 
-    public function makeDir($dirName = 'test'){
+    public static function makeDir($dirName = 'test'){
         $code =  500;
-        $getToken = $this->getToken();
+        $getToken = self::getToken();
         if($getToken['code'] == 200){
             $params = [
                 'path' => 'hrdocs/'.$dirName,
                 'mkdir_parents'=> false
             ];
-            $url = $this->FILE_TRANSFER_URL.'/dirs';
+            $url = self::$FILE_TRANSFER_URL.'/dirs';
             $res  = Http::withToken($getToken['token'])->withQueryParameters($params)->post($url);
 
             $code = $res->status();
@@ -43,13 +44,13 @@ trait FileTransferTrait
         ];
     }
 
-    public function uploadFile($dirName = 'test', $filePath = '/images/867008520/1671577c-1fb5-11f0-99e3-ad47a75ea4ce.jpg'){
+    public static function uploadFile($dirName = 'test', $filePath = '/images/867008520/1671577c-1fb5-11f0-99e3-ad47a75ea4ce.jpg'){
 
         $code =  500;
 
-        $getToken = $this->getToken();
+        $getToken = self::getToken();
         if($getToken['code'] == 200){
-            $url = $this->FILE_TRANSFER_URL.'/files';
+            $url = self::$FILE_TRANSFER_URL.'/files';
             $params = [
                 'path' => 'hrdocs/'.$dirName,
                 'mkdir_parents'=> false
